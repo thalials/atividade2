@@ -100,6 +100,9 @@ while(True):
             # draw the center of the circle
             cv2.circle(selecao,(i[0],i[1]),2,(0,0,255),3)
 
+                
+
+
     # Draw a diagonal blue line with thickness of 5 px
     # cv2.line(img, pt1, pt2, color[, thickness[, lineType[, shift]]])
     cv2.line(bordas_color,(0,0),(511,511),(255,0,0),5)
@@ -109,16 +112,28 @@ while(True):
 
     # cv2.putText(img, text, org, fontFace, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]])
     font = cv2.FONT_HERSHEY_SIMPLEX
-    cv2.putText(selecao,'Press q to quit',(0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
+#    cv2.putText(selecao,'Press q to quit',(0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
+    try: 
+        cv2.line(selecao, (circles[0][0][0],circles[0][0][1]), (circles[0][1][0],circles[0][1][1]), (0,255,0), 2)
+        x1 = circles[0][0][0]
+        x2 = circles[0][1][0]
+        y1 = circles[0][0][1]
+        y2 = circles[0][1][1]
+        dist = math.sqrt( (x2 - x1)**2 + (y2 - y1)**2 )
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        print(dist)
+#        cv2.putText(selecao,dist,(0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
+    except:
+        print("craqueou")
+        
+        
     
     #More drawing functions @ http://docs.opencv.org/2.4/modules/core/doc/drawing_functions.html
     
-    if len(circles) > 1:
-        distance = math.sqrt((circles[1][0][0][1] - [2][0][0][1])**2 + (circles[1][1][0][1] - [2][1][0][1])**2)
 
     # Display the resulting frameq
     cv2.imshow('Detector de circulos',selecao)
-    cv2.line((circles[1][0][0][0], circles[1][0][0][1]),(circles[2][0][0][0], circles[2][0][0][1]))
+#    cv2.line((circles[1][0][0][0], circles[1][0][0][1]),(circles[2][0][0][0], circles[2][0][0][1]))
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
