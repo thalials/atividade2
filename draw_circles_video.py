@@ -59,7 +59,7 @@ while(True):
     ##Mask do Ciano
     mask_ciano = cv2.inRange(frame_hsv, hsv1_ciano, hsv2_ciano)
     
-    ##Mask do Ciano
+    ##Mask da Magenta
     mask_magenta = cv2.inRange(frame_hsv, hsv1_magenta, hsv2_magenta)
     
     ##Mascára Final
