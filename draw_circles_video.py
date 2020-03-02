@@ -25,6 +25,8 @@ lower = 0
 upper = 1
 counter = 0
 variavel = 0
+h = 0
+font = cv2.FONT_HERSHEY_SIMPLEX
 
 print("Press q to QUIT")
 
@@ -78,7 +80,7 @@ while(True):
     # Detect the edges present in the image
     bordas = auto_canny(blur)
 
-    circles = []
+    # circles = []
 
     # Obtains a version of the edges image where we can draw in color
     bordas_color = cv2.cvtColor(bordas, cv2.COLOR_GRAY2BGR)
@@ -86,54 +88,69 @@ while(True):
     # HoughCircles - detects circles using the Hough Method. For an explanation of
     # param1 and param2 please see an explanation here http://www.pyimagesearch.com/2014/07/21/detecting-circles-images-using-opencv-hough-circles/
     circles = None
-    circles=cv2.HoughCircles(bordas,cv2.HOUGH_GRADIENT,2,40,param1=50,param2=100,minRadius=5,maxRadius=60)
+    circles = cv2.HoughCircles(bordas,cv2.HOUGH_GRADIENT,2,40,param1=50,param2=100,minRadius=5,maxRadius=60)
 
     if circles is not None:        
         circles = np.uint16(np.around(circles))
         for i in circles[0,:]:
-            print(i)
+            # print(i)
             # draw the outer circle
-            # cv2.circle(img, center, radius, color[, thickness[, lineType[, shift]]])
-            cv2.circle(selecao,(i[0],i[1]),i[2],(0,255,0),2)
+          # cv2.circle(img,        center,  radius, color[, thickness[, lineType[, shift]]])
+            cv2.circle(selecao, (i[0],i[1]), i[2], (0,255,0), 2)
             # draw the center of the circle
-            cv2.circle(selecao,(i[0],i[1]),2,(0,0,255),3)
+            cv2.circle(selecao, (i[0],i[1]), 2, (0,0,255), 3)
 
                 
     # Draw a diagonal blue line with thickness of 5 px
     # cv2.line(img, pt1, pt2, color[, thickness[, lineType[, shift]]])
-    cv2.line(bordas_color,(0,0),(511,511),(255,0,0),5)
+    cv2.line(bordas_color, (0,0), (511,511), (255,0,0), 5)
 
     # cv2.rectangle(img, pt1, pt2, color[, thickness[, lineType[, shift]]])
     cv2.rectangle(bordas_color,(384,0),(510,128),(0,255,0),3)
     counter += 1
-    print(counter)
+    # print(counter)
 
     # cv2.putText(img, text, org, fontFace, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]])
     try: 
-        cv2.line(selecao, (circles[0][0][0],circles[0][0][1]), (circles[0][1][0],circles[0][1][1]), (0,255,0), 2)
-        if counter == 20:
-            counter = 0
-            x1 = circles[0][0][0]
-            x2 = circles[0][1][0]
-            y1 = circles[0][0][1]
-            y2 = circles[0][1][1]
-            f = 17.0
-            H = 13.8
-            h = math.sqrt( (x2 - x1)**2 + (y2 - y1)**2 )
-            variavel = H * f / h
-            variavel = round(variavel,2)
-            print("A distância é ", variavel)
+        cv2.line(selecao, (circles[0][0][0], circles[0][0][1]), (circles[0][1][0], circles[0][1][1]), (0,255,0), 2)
+        
+        # if counter == 20:
+        #     counter = 0
+        # x1 = circles[0][0][0]
+        # x2 = circles[0][1][0]
+        # y1 = circles[0][0][1]
+        # y2 = circles[0][1][1]
+
+        circle1 = np.array(circles[0][0][:2],dtype='int64')
+        circle2 = np.array(circles[0][1][:2],dtype='int64')
+        print("circle1 = ",circle1)
+        print("circle2 = ",circle2)
+        vetor1_2 = abs(circle1-circle2)
+        print("vetor1_2:",vetor1_2)
+        print("circles[0][0]:",circles[0][0])
+        print("circles[0][1]:",circles[0][1])
+        f = 443.8 #17.0
+        H = 13.8
+        # h = math.sqrt( (x2 - x1)**2 + (y2 - y1)**2 )
+        h = math.sqrt( vetor1_2.dot( vetor1_2 ) ) # forma otimizada de calcular distancia
+        print("h =",h)
+        variavel = round( (H * f / h), 2)
+        print("A distância é ", variavel,"\n")
+        
     except:
-        print("Deu ruim")
+        pass
     
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    cv2.putText(selecao,"Aperte q",(0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
-    cv2.putText(selecao,str(variavel),(100,100), font, 1,(255,255,255),2,cv2.LINE_AA)
+    
+    cv2.putText(selecao," Aperte q", (0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
+    cv2.putText(selecao," h="+str(h),(0,100), font, 1,(255,255,255),2,cv2.LINE_AA)
+    cv2.putText(selecao," d="+str(variavel),(0,150), font, 1,(255,255,255),2,cv2.LINE_AA)
     
     #More drawing functions @ http://docs.opencv.org/2.4/modules/core/doc/drawing_functions.html
-    # Display the resulting frameq
+
+    # Display the resulting frame
     cv2.imshow('Detector de circulos',selecao)
-#    cv2.line((circles[1][0][0][0], circles[1][0][0][1]),(circles[2][0][0][0], circles[2][0][0][1]))
+    # cv2.imshow("Frame", frame)
+
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
