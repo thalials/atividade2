@@ -145,13 +145,10 @@ while(True):
     cv2.putText(frame,"  distancia = "+str(variavel)+" cm",(0,120), font2, 1.2, (0,0,0), 2, cv2.LINE_AA)
     cv2.putText(frame,"  angulo = %.0f degrees" %angulo,(0,140), font2, 1.2, (0,0,0), 2, cv2.LINE_AA)
     cv2.putText(frame,"  h = %.0f px" %h,(0,160), font2, 1.2,(0,0,0), 2, cv2.LINE_AA)
-    cv2.putText(selecao," Aperte q", (0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
+    cv2.putText(selecao," Aperte q para sair", (0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
     cv2.putText(selecao,"  distancia = "+str(variavel)+" cm",(0,120), font2, 1.2, (255,255,255), 2, cv2.LINE_AA)
     cv2.putText(selecao,"  angulo = %.0f degrees" %angulo,(0,140), font2, 1.2, (255,255,255), 2, cv2.LINE_AA)
     cv2.putText(selecao,"  h = %.0f px" %h,(0,160), font2, 1.2,(255,255,255), 2, cv2.LINE_AA)
-
-
-
 
     #More drawing functions @ http://docs.opencv.org/2.4/modules/core/doc/drawing_functions.html
 
