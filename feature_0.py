@@ -1,15 +1,12 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-
+# -- coding: utf-8 --
 
 import cv2
 
 # Cria o detector BRISK
 brisk = cv2.BRISK_create()
 
-
-# Configura o algoritmo de casamento de features que vê *como* o objeto que deve ser encontrado aparece na imagem
+# Configura o algoritmo de casamento de features que vê como o objeto que deve ser encontrado aparece na imagem
 bf = cv2.BFMatcher(cv2.NORM_HAMMING)
 
 # Define o mínimo de pontos similares
@@ -42,7 +39,6 @@ if __name__ == "__main__":
     img_original = cv2.cvtColor(original_rgb, cv2.COLOR_BGR2GRAY)
     #original_rgb = cv2.cvtColor(original_bgr, cv2.COLOR_BGR2RGB)
 
-
     # Encontra os pontos únicos (keypoints) nas duas imagems
     kp1, des1 = brisk.detectAndCompute(img_original ,None)
 
@@ -73,4 +69,3 @@ if __name__ == "__main__":
     # When everything done, release the capture
     cap.release()
     cv2.destroyAllWindows()
-
