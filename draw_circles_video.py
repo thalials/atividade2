@@ -25,15 +25,19 @@ lower = 0
 upper = 1
 counter = 0
 variavel = 0
+circle1 = np.array([0,0])
+circle2 = np.array([0,240])
+angulo = 0
 h = 0
 font = cv2.FONT_HERSHEY_SIMPLEX
+font2 = cv2.FONT_HERSHEY_PLAIN
 
 print("Press q to QUIT")
 
 # Returns an image containing the borders of the image
 # sigma is how far from the median we are setting the thresholds
 def auto_canny(image, sigma=0.33):
-    # compute the median of the single channel pixel intensities
+    """compute the median of the single channel pixel intensities"""
     v = np.median(image)
 
     # apply automatic Canny edge detection using the computed median
@@ -50,8 +54,9 @@ while(True):
     
     frame_hsv = cv2.cvtColor (frame, cv2.COLOR_BGR2HSV)
     
-        #Máscara 
-    
+    # Convert the frame to grayscale
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
     ##hsv's do Ciano
     hsv1_ciano, hsv2_ciano = aux.ranges('#004586')
     
@@ -68,10 +73,11 @@ while(True):
     mask = mask_ciano + mask_magenta
     
     ##Seleção
-    selecao = cv2.bitwise_and(frame, frame, mask=mask)
+    # selecao = cv2.bitwise_and(frame, frame, mask=mask)
+    segmentado = cv2.morphologyEx(mask,cv2.MORPH_CLOSE, np.ones((5, 5)))
+    segmentado = cv2.morphologyEx(segmentado,cv2.MORPH_RECT, np.ones((5, 5)))
+    selecao = cv2.bitwise_and(frame, frame, mask=segmentado)
 
-    # Convert the frame to grayscale
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
     # A gaussian blur to get rid of the noise in the image
     blur = cv2.GaussianBlur(gray,(5,5),0)
@@ -121,30 +127,37 @@ while(True):
         # y1 = circles[0][0][1]
         # y2 = circles[0][1][1]
 
-        circle1 = np.array(circles[0][0][:2],dtype='int64')
-        circle2 = np.array(circles[0][1][:2],dtype='int64')
-        print("circle1 = ",circle1)
-        print("circle2 = ",circle2)
-        vetor1_2 = abs(circle1-circle2)
+        circle1 = np.array(circles[0][0][:2], dtype='int64') # converter para int64 antes de realizar operações
+        circle2 = np.array(circles[0][1][:2], dtype='int64')
+        print("circle1 = ", circle1)
+        print("circle2 = ", circle2)
+        vetor1_2 = (circle1-circle2)
         print("vetor1_2:",vetor1_2)
-        print("circles[0][0]:",circles[0][0])
-        print("circles[0][1]:",circles[0][1])
-        f = 443.8 #17.0
+        tangente = -vetor1_2[1]/vetor1_2[0]
+        angulo = math.degrees( math.atan(tangente) )
+        print("angulo: %.0f°" %angulo)
+        f = 444 #17.0
         H = 13.8
-        # h = math.sqrt( (x2 - x1)**2 + (y2 - y1)**2 )
         h = math.sqrt( vetor1_2.dot( vetor1_2 ) ) # forma otimizada de calcular distancia
-        print("h =",h)
+        print("h = %.2f" %h)
         variavel = round( (H * f / h), 2)
         print("A distância é ", variavel,"\n")
         
     except:
         pass
     
-    
+    center = np.array(((circle1+circle2)/2),dtype='int64')
+    # adicionar textos na tela:
+
     cv2.putText(selecao," Aperte q", (0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
-    cv2.putText(selecao," h="+str(h),(0,100), font, 1,(255,255,255),2,cv2.LINE_AA)
-    cv2.putText(selecao," d="+str(variavel),(0,150), font, 1,(255,255,255),2,cv2.LINE_AA)
-    
+    # cv2.putText(selecao,"  h="+str(h)+" pixels",(0,100), font2, 1.2,(255,255,255), 2, cv2.LINE_AA)
+    # cv2.putText(selecao,"distancia = "+str(variavel)+" cm", tuple(center) , font2, 1.2, (255,255,255), 2, cv2.LINE_AA)
+    cv2.putText(selecao,"  distancia = "+str(variavel)+" cm",(0,120), font2, 1.2, (255,255,255), 2, cv2.LINE_AA)
+    cv2.putText(selecao,"  angulo = %.0f degrees" %angulo,(0,140), font2, 1.2, (255,255,255), 2, cv2.LINE_AA)
+
+
+
+
     #More drawing functions @ http://docs.opencv.org/2.4/modules/core/doc/drawing_functions.html
 
     # Display the resulting frame
