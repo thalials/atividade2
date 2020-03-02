@@ -149,7 +149,7 @@ while(True):
     center = np.array(((circle1+circle2)/2),dtype='int64')
     # adicionar textos na tela:
 
-    cv2.putText(selecao," Aperte q", (0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
+    cv2.putText(selecao," Aperte q para sair", (0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
     # cv2.putText(selecao,"  h="+str(h)+" pixels",(0,100), font2, 1.2,(255,255,255), 2, cv2.LINE_AA)
     # cv2.putText(selecao,"distancia = "+str(variavel)+" cm", tuple(center) , font2, 1.2, (255,255,255), 2, cv2.LINE_AA)
     cv2.putText(selecao,"  distancia = "+str(variavel)+" cm",(0,120), font2, 1.2, (255,255,255), 2, cv2.LINE_AA)
