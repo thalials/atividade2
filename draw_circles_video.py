@@ -74,8 +74,8 @@ while(True):
     
     ##Seleção
     # selecao = cv2.bitwise_and(frame, frame, mask=mask)
-    segmentado = cv2.morphologyEx(mask,cv2.MORPH_CLOSE, np.ones((5, 5)))
-    segmentado = cv2.morphologyEx(segmentado,cv2.MORPH_RECT, np.ones((5, 5)))
+    segmentado = cv2.morphologyEx(mask,cv2.MORPH_RECT, np.ones((5, 5)))
+    # segmentado = cv2.morphologyEx(segmentado,cv2.MORPH_RECT, np.ones((5, 5)))
     selecao = cv2.bitwise_and(frame, frame, mask=segmentado)
 
     
@@ -102,46 +102,38 @@ while(True):
             # print(i)
             # draw the outer circle
           # cv2.circle(img,        center,  radius, color[, thickness[, lineType[, shift]]])
+            cv2.circle(frame, (i[0],i[1]), i[2], (0,255,0), 2)
             cv2.circle(selecao, (i[0],i[1]), i[2], (0,255,0), 2)
             # draw the center of the circle
-            cv2.circle(selecao, (i[0],i[1]), 2, (0,0,255), 3)
+            cv2.circle(frame, (i[0],i[1]), 2, (0,0,255), 3)
 
-                
+
     # Draw a diagonal blue line with thickness of 5 px
     # cv2.line(img, pt1, pt2, color[, thickness[, lineType[, shift]]])
     cv2.line(bordas_color, (0,0), (511,511), (255,0,0), 5)
 
     # cv2.rectangle(img, pt1, pt2, color[, thickness[, lineType[, shift]]])
-    cv2.rectangle(bordas_color,(384,0),(510,128),(0,255,0),3)
-    counter += 1
-    # print(counter)
+    cv2.rectangle(bordas_color,(0,0),(250,250),(0,255,0),3)
 
     # cv2.putText(img, text, org, fontFace, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]])
     try: 
-        cv2.line(selecao, (circles[0][0][0], circles[0][0][1]), (circles[0][1][0], circles[0][1][1]), (0,255,0), 2)
-        
-        # if counter == 20:
-        #     counter = 0
-        # x1 = circles[0][0][0]
-        # x2 = circles[0][1][0]
-        # y1 = circles[0][0][1]
-        # y2 = circles[0][1][1]
+        cv2.line(frame, (circles[0][0][0], circles[0][0][1]), (circles[0][1][0], circles[0][1][1]), (0,255,0), 2)
 
         circle1 = np.array(circles[0][0][:2], dtype='int64') # converter para int64 antes de realizar operações
         circle2 = np.array(circles[0][1][:2], dtype='int64')
-        print("circle1 = ", circle1)
-        print("circle2 = ", circle2)
         vetor1_2 = (circle1-circle2)
-        print("vetor1_2:",vetor1_2)
         tangente = -vetor1_2[1]/vetor1_2[0]
         angulo = math.degrees( math.atan(tangente) )
-        print("angulo: %.0f°" %angulo)
-        f = 444 #17.0
+        f = 617.39 #17.0
         H = 13.8
         h = math.sqrt( vetor1_2.dot( vetor1_2 ) ) # forma otimizada de calcular distancia
-        print("h = %.2f" %h)
         variavel = round( (H * f / h), 2)
-        print("A distância é ", variavel,"\n")
+        print("h = %.2f" %h)
+        print("circle1 = ", circle1)
+        print("circle2 = ", circle2)
+        print("vetor1_2:",vetor1_2)
+        print("angulo: %.0f°" %angulo)
+        print("distancia: ", variavel,"\n")
         
     except:
         pass
@@ -149,20 +141,21 @@ while(True):
     center = np.array(((circle1+circle2)/2),dtype='int64')
     # adicionar textos na tela:
 
+    cv2.putText(frame," Aperte q", (0,50), font, 1,(0,0,0),2,cv2.LINE_AA)
+    cv2.putText(frame,"  distancia = "+str(variavel)+" cm",(0,120), font2, 1.2, (0,0,0), 2, cv2.LINE_AA)
+    cv2.putText(frame,"  angulo = %.0f degrees" %angulo,(0,140), font2, 1.2, (0,0,0), 2, cv2.LINE_AA)
+    cv2.putText(frame,"  h = %.0f px" %h,(0,160), font2, 1.2,(0,0,0), 2, cv2.LINE_AA)
     cv2.putText(selecao," Aperte q para sair", (0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
-    # cv2.putText(selecao,"  h="+str(h)+" pixels",(0,100), font2, 1.2,(255,255,255), 2, cv2.LINE_AA)
-    # cv2.putText(selecao,"distancia = "+str(variavel)+" cm", tuple(center) , font2, 1.2, (255,255,255), 2, cv2.LINE_AA)
     cv2.putText(selecao,"  distancia = "+str(variavel)+" cm",(0,120), font2, 1.2, (255,255,255), 2, cv2.LINE_AA)
     cv2.putText(selecao,"  angulo = %.0f degrees" %angulo,(0,140), font2, 1.2, (255,255,255), 2, cv2.LINE_AA)
-
-
-
+    cv2.putText(selecao,"  h = %.0f px" %h,(0,160), font2, 1.2,(255,255,255), 2, cv2.LINE_AA)
 
     #More drawing functions @ http://docs.opencv.org/2.4/modules/core/doc/drawing_functions.html
 
     # Display the resulting frame
-    cv2.imshow('Detector de circulos',selecao)
-    # cv2.imshow("Frame", frame)
+    # cv2.imshow('Detector de circulos', selecao)
+    cv2.imshow("Frame", frame)
+    # cv2.imshow("mask", bordas_color)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
